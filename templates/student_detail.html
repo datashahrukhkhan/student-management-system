@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ student.name }} · StudentOS{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">STUDENT PROFILE</div><h1>{{ student.name }}</h1><p>Student ID <span class="id-code">{{ student.student_id }}</span></p></div><div class="heading-actions"><a class="button button-secondary" href="{{ url_for('dashboard') }}">← Back</a><a class="button button-primary" href="{{ url_for('edit_student', student_pk=student.id) }}">Edit record</a></div></div>
+<div class="detail-stats">
+<article class="detail-stat"><span>Total marks</span><strong>{{ "%.0f"|format(student.result.total) }}<small> / 600</small></strong></article>
+<article class="detail-stat"><span>Percentage</span><strong>{{ "%.2f"|format(student.result.percentage) }}<small>%</small></strong></article>
+<article class="detail-stat"><span>Average per subject</span><strong>{{ "%.2f"|format(student.result.average) }}</strong></article>
+<article class="detail-stat"><span>Overall grade</span><strong><span class="grade-badge grade-{{ student.result.grade|replace('+','plus') }}">{{ student.result.grade }}</span></strong></article>
+</div>
+<section class="panel"><div class="panel-header"><div><h2>Subject performance</h2><p>Marks and performance across all six subjects.</p></div><span class="status-pill {{ 'pass' if student.result.percentage >= 50 else 'review' }}">{{ 'Passing' if student.result.percentage >= 50 else 'Needs review' }}</span></div>
+<div class="subject-list">{% for subject in subjects %}<div class="subject-row"><div class="subject-name">{{ subject }}</div><div class="subject-progress"><div class="progress"><i style="width: {{ student.marks[subject] }}%"></i></div></div><div class="subject-score">{{ "%.1f"|format(student.marks[subject]) }} <span>/ 100</span></div></div>{% endfor %}</div>
+<div class="detail-footer"><div><span class="muted">Created</span><strong>{{ student.created_at }}</strong></div><form method="post" action="{{ url_for('delete_student', student_pk=student.id) }}" data-confirm="Delete this student and all six subject marks? This cannot be undone."><button class="button button-danger" type="submit">Delete student</button></form></div></section>
+{% endblock %}

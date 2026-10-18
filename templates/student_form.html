@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit student' if student else 'Add student' }} · StudentOS{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">STUDENT RECORDS</div><h1>{{ 'Edit student' if student else 'Add a student' }}</h1><p>{{ 'Update the student details and subject marks.' if student else 'Enter student information and marks for all six subjects.' }}</p></div><a class="button button-secondary" href="{{ url_for('dashboard') }}">← Back to dashboard</a></div>
+<form method="post" class="form-layout">
+<section class="panel form-panel"><div class="section-title"><span class="section-number">01</span><div><h2>Basic information</h2><p>Identify the student record.</p></div></div>
+<div class="field-grid">
+<label class="field"><span>Student ID <b>*</b></span><input name="student_id" required maxlength="40" value="{{ request.form.get('student_id', student.student_id if student else '') }}" placeholder="e.g. STU-001"></label>
+<label class="field"><span>Student name <b>*</b></span><input name="name" required maxlength="100" value="{{ request.form.get('name', student.name if student else '') }}" placeholder="Enter full name"></label>
+</div></section>
+<section class="panel form-panel"><div class="section-title"><span class="section-number">02</span><div><h2>Subject marks</h2><p>Enter marks between 0 and 100 for each subject.</p></div><span class="total-chip">600 total possible</span></div>
+<div class="marks-grid">{% for subject in subjects %}<label class="field mark-field"><span>{{ subject }} <b>*</b></span><div class="mark-input"><input type="number" name="mark_{{ subject }}" min="0" max="100" step="0.5" required value="{{ request.form.get('mark_' ~ subject, student.marks[subject] if student else '') }}" placeholder="0–100"><span>/ 100</span></div></label>{% endfor %}</div>
+<div class="form-note"><span>ⓘ</span> Total, percentage, average, and grade are calculated automatically after saving.</div></section>
+<div class="form-actions"><a class="button button-secondary" href="{{ url_for('dashboard') }}">Cancel</a><button class="button button-primary" type="submit">{{ 'Save changes' if student else 'Create student record' }} →</button></div>
+</form>
+{% endblock %}

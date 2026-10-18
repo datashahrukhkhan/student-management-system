@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · StudentOS{% endblock %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">OVERVIEW</div><h1>Dashboard</h1><p>Track student records and academic performance in one place.</p></div><div class="date-chip">● &nbsp; System ready</div></div>
+<div class="stats-grid">
+<article class="stat-card"><div class="stat-top"><span class="stat-icon purple">♙</span><span class="stat-caption">ALL RECORDS</span></div><div class="stat-value">{{ total_students }}</div><div class="stat-label">Total students</div><div class="stat-foot">Students in your database</div></article>
+<article class="stat-card"><div class="stat-top"><span class="stat-icon blue">％</span><span class="stat-caption">CLASS PERFORMANCE</span></div><div class="stat-value">{{ "%.1f"|format(average_percentage) }}<small>%</small></div><div class="stat-label">Average percentage</div><div class="stat-foot">Across all student records</div></article>
+<article class="stat-card"><div class="stat-top"><span class="stat-icon green">✓</span><span class="stat-caption">PASSING STUDENTS</span></div><div class="stat-value">{{ pass_count }}</div><div class="stat-label">At least 50% overall</div><div class="stat-foot">Based on current grade rules</div></article>
+</div>
+<section class="panel">
+<div class="panel-header"><div><h2>Student directory</h2><p>Search, review, and manage student academic records.</p></div>
+<form class="search-form" action="{{ url_for('search') }}" method="get"><span>⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search name or student ID..." aria-label="Search students">{% if search %}<a class="clear-search" href="{{ url_for('dashboard') }}">Clear</a>{% endif %}</form></div>
+{% if students %}<div class="table-wrap"><table><thead><tr><th>STUDENT</th><th>STUDENT ID</th><th>TOTAL MARKS</th><th>PERCENTAGE</th><th>GRADE</th><th>STATUS</th><th></th></tr></thead><tbody>
+{% for student in students %}<tr>
+<td><a class="student-name" href="{{ url_for('student_detail', student_pk=student.id) }}"><span class="student-avatar avatar-{{ loop.index0 % 5 }}">{{ student.name[:1]|upper }}</span><span>{{ student.name }}</span></a></td>
+<td><span class="id-code">{{ student.student_id }}</span></td><td><strong>{{ "%.0f"|format(student.result.total) }}</strong><span class="muted"> / 600</span></td>
+<td><div class="percentage-cell"><span>{{ "%.1f"|format(student.result.percentage) }}%</span><div class="progress"><i style="width: {{ student.result.percentage }}%"></i></div></div></td>
+<td><span class="grade-badge grade-{{ student.result.grade|replace('+','plus') }}">{{ student.result.grade }}</span></td>
+<td><span class="status-pill {{ 'pass' if student.result.percentage >= 50 else 'review' }}">{{ 'Passing' if student.result.percentage >= 50 else 'Needs review' }}</span></td>
+<td><div class="row-actions"><a href="{{ url_for('student_detail', student_pk=student.id) }}">View</a><a href="{{ url_for('edit_student', student_pk=student.id) }}">Edit</a></div></td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="empty-state"><div class="empty-icon">♙</div><h3>{{ 'No matching students' if search else 'Your student list is empty' }}</h3><p>{{ 'Try another name or student ID.' if search else 'Add your first student to start tracking six-subject results.' }}</p>{% if search %}<a class="button button-secondary" href="{{ url_for('dashboard') }}">Clear search</a>{% else %}<a class="button button-primary" href="{{ url_for('add_student') }}">＋ Add first student</a>{% endif %}</div>{% endif %}
+<div class="panel-footer"><span>Showing <strong>{{ students|length }}</strong> of <strong>{{ total_students }}</strong> students</span><span>6 subjects · 600 maximum marks</span></div>
+</section>
+{% endblock %}

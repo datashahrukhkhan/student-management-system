@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}StudentOS{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar">
+<a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-mark">S</span><span>Student<span class="brand-light">OS</span><small>ACADEMIC MANAGER</small></span></a>
+<div class="nav-label">WORKSPACE</div>
+<nav class="nav-links">
+<a class="{% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}"><span>▦</span> Dashboard</a>
+<a class="{% if request.endpoint in ['add_student','edit_student'] %}active{% endif %}" href="{{ url_for('add_student') }}"><span>＋</span> Add student</a>
+</nav>
+<div class="sidebar-bottom"><div class="avatar">SM</div><div><strong>Admin workspace</strong><small>Student management</small></div></div>
+</aside>
+<main class="main-area">
+<header class="topbar"><div><div class="eyebrow">ACADEMIC OVERVIEW</div><div class="topbar-title">Student Management</div></div><a class="button button-primary" href="{{ url_for('add_student') }}">＋ Add student</a></header>
+<section class="page-content">
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+</section>
+<footer class="footer">StudentOS <span>•</span> Local academic records</footer>
+</main></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>
